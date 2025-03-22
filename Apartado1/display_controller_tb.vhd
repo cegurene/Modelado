@@ -1,18 +1,12 @@
--------------------------------------------------------------------------------
-
 library ieee;
 use ieee.std_logic_1164.all;
-
--------------------------------------------------------------------------------
 
 entity display_controller_tb is
 
 end display_controller_tb;
 
--------------------------------------------------------------------------------
-
 architecture sim of display_controller_tb is
-  constant CNT1         : time      :=;  --completar
+  constant CNT1         : time      := 2.75ms;  --completar
   signal   RST_i        : std_logic := '1';
   signal   CLK_i        : std_logic := '0';
   signal   DATO_RX_OK_i : std_logic;
@@ -39,8 +33,8 @@ begin  -- sim
       SEG_AG => SEG_AG_i,
       AND_70 => AND_70_i);
 
-  RST_i <=;                             --completar, copiar del tutorial
-  CLK_i <=;                             --completar
+  RST_i <= '0' after 123ns;                             --completar, copiar del tutorial
+  CLK_i <= not clk_i after 5ns;                             --completar
 
   process
 
@@ -80,31 +74,31 @@ begin  -- sim
     dato_vis <= dato_1; --dato que se debe visualizar
     enviar_dato(dato_1);
 
-    dato_1 := x"";                      --completar
+    dato_1 := x"23456789";                      --completar
     dato_vis <= dato_1;
     enviar_dato(dato_1);
 
-    dato_1 := x"";                      --completar
+    dato_1 := x"45678901";                      --completar
     dato_vis <= dato_1;
     enviar_dato(dato_1);
 
-    dato_1 := x"";                      --completar
+    dato_1 := x"67890123";                      --completar
     dato_vis <= dato_1;
     enviar_dato(dato_1);
 
-    dato_1 := x"";                      --completar
+    dato_1 := x"89012345";                      --completar
     dato_vis <= dato_1;
     enviar_dato(dato_1);
 
-    dato_1 := x"";                      --completar
+    dato_1 := x"01234567";                      --completar
     dato_vis <= dato_1;
     enviar_dato(dato_1);
 
-    dato_1 := x"";                      --completar
+    dato_1 := x"23456789";                      --completar
     dato_vis <= dato_1;
     enviar_dato(dato_1);
 
-    dato_1 := x"";                      --completar
+    dato_1 := x"45678901";                      --completar
     dato_vis <= dato_1;
     enviar_dato(dato_1);
 
