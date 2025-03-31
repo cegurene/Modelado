@@ -1,18 +1,11 @@
--------------------------------------------------------------------------------
-
 library ieee;
 use ieee.std_logic_1164.all;
-
--------------------------------------------------------------------------------
 
 entity spi_controller_tb is
 
 end spi_controller_tb;
 
--------------------------------------------------------------------------------
-
 architecture sim of spi_controller_tb is
-
 
   signal CLK_i         : std_logic                     := '0';
   signal RST_i         : std_logic                     := '1';
@@ -24,7 +17,7 @@ architecture sim of spi_controller_tb is
   signal   SDIN_i    : std_logic;
   signal   SCLK_i    : std_logic;
   signal   END_SPI_i : std_logic;
-  constant T_data    : time := ; --Completar
+  constant T_data    : time := 1ms; --Completar (est· mal puesto el valor)
 begin  -- sim
 
   DUT : entity work.spi_controller
@@ -50,7 +43,8 @@ begin  -- sim
 
   -- est√≠mulos para CLK y RST
 
---  
+  RST_i <= '0' after 123ns;                             --completar, copiado del tutorial
+  CLK_i <= not clk_i after 5ns;                             --completar
 
 
   process

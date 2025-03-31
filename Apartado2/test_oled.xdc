@@ -2,7 +2,6 @@
 set_property -dict { PACKAGE_PIN E3    IOSTANDARD LVCMOS33 } [get_ports { CLK }]; 
 create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports {CLK}];
 
-
 #RST
 set_property -dict { PACKAGE_PIN M18   IOSTANDARD LVCMOS33 } [get_ports { RST }];	
 
@@ -22,7 +21,6 @@ set_property -dict { PACKAGE_PIN G18    IOSTANDARD LVCMOS33 } [get_ports { VDD }
 #pulsador DATA_OK
 set_property -dict { PACKAGE_PIN P18   IOSTANDARD LVCMOS33 } [get_ports { DATA_OK }];	
 		
-	
 # switches DATA 
 # switches sw 
 set_property -dict { PACKAGE_PIN J15   IOSTANDARD LVCMOS33 } [get_ports { DATA[0] }];	
