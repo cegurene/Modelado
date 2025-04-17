@@ -40,28 +40,28 @@ begin  -- sim
 
     procedure enviar_dato(dato : std_logic_vector(31 downto 0) ) is
     begin
-      wait until CLK_i = '0';
+      wait until CLK_i = '1';
       DATO_RX_i    <= dato(31 downto 24);
       DATO_RX_OK_i <= '1';
-      wait until CLK_i = '0';
+      wait until CLK_i = '1';
       DATO_RX_OK_i <= '0';
       wait for CNT1;
 
       DATO_RX_i    <= dato(23 downto 16);
       DATO_RX_OK_i <= '1';
-      wait until CLK_i = '0';
+      wait until CLK_i = '1';
       DATO_RX_OK_i <= '0';
       wait for CNT1;
 
       DATO_RX_i    <= dato(15 downto 8);
       DATO_RX_OK_i <= '1';
-      wait until CLK_i = '0';
+      wait until CLK_i = '1';
       DATO_RX_OK_i <= '0';
       wait for CNT1;
 
       DATO_RX_i    <= dato(7 downto 0);
       DATO_RX_OK_i <= '1';
-      wait until CLK_i = '0';
+      wait until CLK_i = '1';
       DATO_RX_OK_i <= '0';
 
       wait for 4*CNT1;
