@@ -3,9 +3,10 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="display_controller_tb_behav.wdb" id="1">
+      <db_ref path="display_controller_tb_time_impl.wdb" id="1">
          <top_modules>
             <top_module name="display_controller_tb" />
+            <top_module name="glbl" />
          </top_modules>
       </db_ref>
    </db_ref_list>
@@ -15,7 +16,7 @@
       <Cursor1Time time="508140000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="130"></NameColumnWidth>
+      <NameColumnWidth column_width="126"></NameColumnWidth>
       <ValueColumnWidth column_width="58"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="9" />

@@ -54,7 +54,7 @@ begin  -- rtl
 
     tx_data;
 
-    dato_tx <= x"";                     -- completar
+    dato_tx <= x"22";                     -- completar
     wait for DELAY_DATO_TX;
     tx_data;
 
