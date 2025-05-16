@@ -129,7 +129,7 @@ begin
             else
               sample_count <= sample_count + 1;
             end if;
-
+          -- El bit de paridad es cero (0) si el dato tiene un número impar de unos.
           when output_data =>
             parity_calc <= '0';
             for i in 0 to 7 loop
