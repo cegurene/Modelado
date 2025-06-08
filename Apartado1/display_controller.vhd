@@ -16,7 +16,9 @@ end display_controller;
 
 architecture Behavioral of display_controller is
 
-  constant CTE_ANDS : integer := 11 * 50; -- puesto 11
+  --puesto 11
+  --constant CTE_ANDS : integer := 11 * 50; --simulacion
+  constant CTE_ANDS : integer := 137500; --descarga (2,75ms/10ns)
 
   -- Registro de desplazamiento de 4 caracteres (4 x 8 bits = 32 bits)
   signal shift_reg : std_logic_vector(31 downto 0) := (others => '0');
@@ -62,7 +64,7 @@ begin
     end if;
   end process;
 
-  -- Multiplexor para seleccionar el nibble (4 bits) que se mostrará
+  -- Multiplexor para seleccionar el nibble (4 bits) que se mostrara
   with sel_disp select
     nibble_sel <= shift_reg(3 downto 0)   when 0,
                   shift_reg(7 downto 4)   when 1,
@@ -96,7 +98,7 @@ begin
     end case;
   end process;
 
-  -- Activación del display correspondiente (AND_70 activo bajo)
+  -- Activacion del display correspondiente (AND_70 activo bajo)
   with sel_disp select
     AND_70 <= "11111110" when 0,
               "11111101" when 1,
@@ -107,7 +109,7 @@ begin
               "10111111" when 6,
               "01111111" when others;
 
-  -- Activación del punto decimal en D2, D4, D6
+  -- Activacion del punto decimal en D2, D4, D6
   process(sel_disp)
   begin
     case sel_disp is

@@ -49,14 +49,43 @@ begin  -- rtl
 
     dato_tx <= x"31";
     Rx      <= '1';
--- wait for 1.5 ms;                     -- sólo para simular el top_system
+    --wait for 1.5 ms;                     -- sólo para simular el top_system
     wait for 1 us;                      --sólo para simular el  receiver
 
     tx_data;
 
-    dato_tx <= x"22";                     -- completar
+    dato_tx <= x"45";                     -- completar
     wait for DELAY_DATO_TX;
     tx_data;
+    
+    dato_tx <= x"72";                     -- completar
+    wait for DELAY_DATO_TX;
+    tx_data;
+    
+    dato_tx <= x"12";                     -- completar
+    wait for DELAY_DATO_TX;
+    tx_data;
+    
+    dato_tx <= x"90";                     -- completar
+    wait for DELAY_DATO_TX;
+    tx_data;
+    
+    dato_tx <= x"a5";                     -- completar
+    wait for DELAY_DATO_TX;
+    tx_data;
+    
+    dato_tx <= x"b9";                     -- completar
+    wait for DELAY_DATO_TX;
+    tx_data;
+        
+     dato_tx <= x"00";                     -- completar
+    wait for DELAY_DATO_TX;
+    tx_data;
+    
+    dato_tx <= x"ff";                     -- completar
+    wait for DELAY_DATO_TX;
+    tx_data;
+        
 
     ------------------------------------------------
 --repetir varias veces las tres últimas líneas
