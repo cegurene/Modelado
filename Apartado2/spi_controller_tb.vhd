@@ -24,7 +24,7 @@ architecture sim of spi_controller_tb is
   signal   SDIN_i    : std_logic;
   signal   SCLK_i    : std_logic;
   signal   END_SPI_i : std_logic;
-  constant T_data    : time := 10ms; --Completar
+  constant T_data    : time := 50us; --Completar
 begin  -- sim
 
   DUT : entity work.spi_controller
@@ -68,16 +68,15 @@ clk_i <= not CLK_i after 10ns;                             --completar
 
   begin  -- process
 
-    wait for ;--Completar
-    gen_dato(''&x"");--Completar
-    gen_dato(''&x"");--Completar
-    gen_dato(''&x"");--Completar
-    gen_dato(''&x"");--Completar
-    gen_dato(''&x"");--Completar
-    gen_dato(''&x"");--Completar
-    gen_dato(''&x"");--Completar
-    gen_dato(''&x"");--Completar
-    gen_dato(''&x"");--Completar   
+    wait for 73ns;--Completar
+    gen_dato('1'&x"aa");--Completar
+    gen_dato('0'&x"aa");--Completar
+    gen_dato('0'&x"00");--Completar
+    gen_dato('1'&x"00");--Completar
+    gen_dato('0'&x"ff");--Completar
+    gen_dato('1'&x"ff");--Completar
+    gen_dato('0'&x"23");--Completar
+    gen_dato('1'&x"23");--Completar
 
     report "fin de la simulacion" severity failure;
   end process;

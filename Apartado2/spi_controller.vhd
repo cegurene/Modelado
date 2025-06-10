@@ -19,120 +19,121 @@ end spi_controller;
 architecture rtl of spi_controller is
 
   ------------------------------------------------------------------------------
-  -- Declaración de tipos y señales internas
+  -- Declaracion de tipos y se�ales internas
   ------------------------------------------------------------------------------
-  type state_type is (IDLE, LOAD, SHIFT, DONE);
-  signal state, next_state : state_type;
 
-  signal shift_reg  : std_logic_vector(7 downto 0);
-  signal bit_index  : integer range 0 to 7 := 0;
-  signal clk_count  : integer := 0;
-  signal sclk_int   : std_logic := '0';
-  signal ce         : std_logic := '0';
-  signal prescaler  : integer := 77; -- N1 = puesto 11 × 7 -- N1 * 10ns (ajustar según el puesto)
-  signal sclk_enable: std_logic := '0';
+  signal shift_reg      : std_logic_vector(7 downto 0);
+  signal count_mux      : integer range 0 to 9 := 0;
+  signal sclk_int       : std_logic := '1';
+  signal ce             : std_logic := '0';
+  signal prescaler      : integer := 0;
+  signal prescaler_int  : integer := 77; -- N1 = puesto 11 * 7 -- N1 * 10ns (ajustar segun el puesto)
+  signal fc             : std_logic := '0';
+  signal int            : std_logic := '0'; --para la generacion de ce a partir de fc
+  signal busy           : std_logic := '0';
 
 begin
 
-  ------------------------------------------------------------------------------
-  -- Prescaler para generar señal SCLK más lenta
-  ------------------------------------------------------------------------------
-  process(CLK, RST)
-  begin
-    if RST = '1' then
-      clk_count <= 0;
-      sclk_int  <= '0';
-      sclk_enable <= '0';
-    elsif rising_edge(CLK) then
-      if state = SHIFT then
-        if clk_count = prescaler - 1 then
-          clk_count <= 0;
-          sclk_int <= not sclk_int;
-          sclk_enable <= '1';
-        else
-          clk_count <= clk_count + 1;
-          sclk_enable <= '0';
-        end if;
-      else
-        clk_count <= 0;
-        sclk_int <= '0';
-        sclk_enable <= '0';
+-- Prescaler para generar se�al fc y ce
+   process(CLK, RST)
+   begin
+      if RST = '1' then
+         prescaler <= 0;
+         fc <= '0';
+         ce <= '0';
+         int <= '0';
+      elsif rising_edge(clk) then
+         if busy = '1' then
+            if prescaler = prescaler_int - 1 then
+               if int = '0' then
+                  ce <= '1';
+               end if;
+               prescaler <= 0;
+               fc <= '1';
+               int <= not int;
+            else
+               prescaler <= prescaler + 1;
+               fc <= '0';
+               ce <= '0';
+            end if;
+         end if;
       end if;
-    end if;
-  end process;
+   end process;
+   
+-- Circuito secuencial para generar SCLK
+   process(RST, CLK)
+   begin
+      if RST = '1' then
+         sclk_int <= '1';
+         SCLK <= '1';
+      elsif rising_edge(CLK) then
+         if fc = '1' then
+            SCLK <= not sclk_int;
+            sclk_int <= not sclk_int;
+         end if;
+      end if;
+   end process;
 
-  SCLK <= sclk_int;
+-- Registro
+   process(CLK, RST)
+   begin
+      if RST = '1' then
+         shift_reg <= (others => '0');
+         D_C <= '0';
+      elsif rising_edge(CLK) then
+         if DATA_SPI_OK = '1' then
+            D_C <= DATA_SPI(8);
+            shift_reg <= DATA_SPI(7 downto 0);
+         end if;
+      end if;
+   end process;
 
-  ------------------------------------------------------------------------------
-  -- Máquina de estados secuencial
-  ------------------------------------------------------------------------------
-  process(CLK, RST)
-  begin
-    if RST = '1' then
-      state <= IDLE;
-    elsif rising_edge(CLK) then
-      state <= next_state;
-    end if;
-  end process;
+-- Generacion de se�al busy y CS
+   process(RST, CLK)
+   begin
+      if RST = '1' then
+         cs <= '1';
+         busy <= '0';
+      elsif rising_edge(CLK) then
+         if DATA_SPI_OK = '1' then
+            cs <= '0';
+            busy <= '1';
+         end if;
+         if count_mux = 9 then
+            cs <= '1';
+            busy <= '0';
+         end if;
+      end if;
+   end process;
+   
+-- Contador para enviar la se�al
 
-  ------------------------------------------------------------------------------
-  -- Lógica combinacional de transición de estados
-  ------------------------------------------------------------------------------
-  process(state, DATA_SPI_OK, sclk_enable, bit_index)
-  begin
-    next_state <= state;
-    case state is
-      when IDLE =>
-        if DATA_SPI_OK = '1' then
-          next_state <= LOAD;
-        end if;
-      when LOAD =>
-        next_state <= SHIFT;
-      when SHIFT =>
-        if sclk_enable = '1' and sclk_int = '1' then
-          if bit_index = 7 then
-            next_state <= DONE;
-          end if;
-        end if;
-      when DONE =>
-        next_state <= IDLE;
-    end case;
-  end process;
-
-  ------------------------------------------------------------------------------
-  -- Lógica secuencial: salida y comportamiento del SPI
-  ------------------------------------------------------------------------------
-  process(CLK, RST)
-  begin
-    if RST = '1' then
-      shift_reg <= (others => '0');
-      D_C <= '0';
-      CS <= '1';
-      SDIN <= '0';
-      bit_index <= 0;
-      END_SPI <= '0';
-    elsif rising_edge(CLK) then
-      case state is
-        when IDLE =>
-          END_SPI <= '0';
-        when LOAD =>
-          shift_reg <= DATA_SPI(7 downto 0);
-          D_C <= DATA_SPI(8);
-          CS <= '0';
-          bit_index <= 0;
-        when SHIFT =>
-          if sclk_enable = '1' and sclk_int = '0' then
-            SDIN <= shift_reg(7);
-          elsif sclk_enable = '1' and sclk_int = '1' then
-            shift_reg <= shift_reg(6 downto 0) & '0';
-            bit_index <= bit_index + 1;
-          end if;
-        when DONE =>
-          CS <= '1';
-          END_SPI <= '1';
-      end case;
-    end if;
-  end process;
+   
+-- Envio de la se�al
+   process(CLK, RST)
+   begin
+      if RST = '1' then
+         END_SPI <= '0';
+         count_mux <= 0;
+         SDIN <= '0';
+      elsif rising_edge(CLK) then
+         if ce = '1' then
+            case count_mux is
+               when 0 =>
+                  SDIN <= '0';
+                  END_SPI <= '0';
+                  count_mux <= count_mux + 1;
+               when 9 =>
+                  END_SPI <= '1';
+                  count_mux <= 0;
+               when others =>
+                  SDIN <= shift_reg(8 - count_mux);
+                  END_SPI <= '0';
+                  count_mux <= count_mux + 1;
+            end case;
+         end if;
+      end if;
+   end process;
 
 end rtl;
 
