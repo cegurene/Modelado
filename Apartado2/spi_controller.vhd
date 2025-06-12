@@ -89,7 +89,7 @@ begin
    end process;
 
 -- Generacion de señal busy y CS
-   process(RST, CLK)
+   process(RST, CLK, count_mux)
    begin
       if RST = '1' then
          cs <= '1';
@@ -98,7 +98,7 @@ begin
          if DATA_SPI_OK = '1' then
             cs <= '0';
             busy <= '1';
-         end if;
+         end if;  
          if count_mux = 9 then
             cs <= '1';
             busy <= '0';
@@ -106,11 +106,8 @@ begin
       end if;
    end process;
    
--- Contador para enviar la señal
-
-   
 -- Envio de la señal
-   process(CLK, RST)
+   process(CLK, RST, ce, count_mux, busy)
    begin
       if RST = '1' then
          END_SPI <= '0';
@@ -120,17 +117,45 @@ begin
          if ce = '1' then
             case count_mux is
                when 0 =>
-                  SDIN <= '0';
-                  END_SPI <= '0';
                   count_mux <= count_mux + 1;
-               when 9 =>
+                  SDIN <= shift_reg(7);
+               when 1 =>
+                  count_mux <= count_mux + 1;
+                  SDIN <= shift_reg(6);
+               when 2 =>
+                  count_mux <= count_mux + 1;
+                  SDIN <= shift_reg(5);
+               when 3 =>
+                  count_mux <= count_mux + 1;
+                  SDIN <= shift_reg(4);
+               when 4 =>
+                  count_mux <= count_mux + 1;
+                  SDIN <= shift_reg(3);
+               when 5 =>
+                  count_mux <= count_mux + 1;
+                  SDIN <= shift_reg(2);
+               when 6 =>
+                  count_mux <= count_mux + 1;
+                  SDIN <= shift_reg(1);
+               when 7 =>
+                  count_mux <= count_mux + 1;
+                  SDIN <= shift_reg(0);
+               when 8 =>
+                  count_mux <= count_mux + 1;
                   END_SPI <= '1';
-                  count_mux <= 0;
+--                  cs <= '1';
+--                  busy <= '0';
                when others =>
-                  SDIN <= shift_reg(8 - count_mux);
                   END_SPI <= '0';
-                  count_mux <= count_mux + 1;
+                  count_mux <= 0;
+--                  busy <= '0';
+--                  cs <= '1';  
             end case;
+         end if;
+         if busy = '0' then
+            END_SPI <= '0';
+            count_mux <= 0;
+            SDIN <= '0';
          end if;
       end if;
    end process;

@@ -25,7 +25,7 @@ architecture rtl of receiver is
   signal sample_count : integer := 0;
   signal sample_check : integer := 0;
   signal bit_value    : std_logic := '0';
-  signal temp_data    : std_logic_vector(7 downto 0);
+  signal temp_data    : std_logic_vector(7 downto 0) := (others => '0');
   signal parity_calc  : std_logic := '0';
   signal parity_rx    : std_logic := '0';
 
@@ -95,6 +95,9 @@ begin
 
               if sample_check < 0 then
                 state <= receiving;
+                parity_calc <= '0';
+                temp_data <= (others => '0');
+
               else
                 state <= idle; -- No era un START valido (puede ser ruido)
                 error_recep <= '1';
@@ -124,6 +127,7 @@ begin
                 temp_data(bit_counter) <= '0';
               else
                 temp_data(bit_counter) <= '1';
+                parity_calc <= not parity_calc;
               end if;
 
               if bit_counter = 7 then
@@ -146,24 +150,8 @@ begin
             end if;
 
           when parity_check =>
-            sample_check <= 0;
             
             if sample_count = SAMPLES_PER_BIT - 1 then
-
-              if sample_check < 0 then
-                parity_rx <= '0';
-              else
-                parity_rx <= '1';
-              end if;
-
-              -- Calculo de paridad
-              -- Contar el número de '1' en temp_data
-              parity_calc <= '0';
-              for i in temp_data'range loop
-                if temp_data(i) = '1' then
-                  parity_calc <= not parity_calc;
-                end if;
-              end loop;
 
               -- Verificar paridad
               if parity_calc = not parity_rx then
@@ -181,9 +169,9 @@ begin
               sample_count <= sample_count + 1;
               
               if rx = '1' then
-                sample_check <= sample_check + 1;
+                parity_rx <= '1';
               else
-                sample_check <= sample_check - 1;
+                parity_rx <= '0';
               end if;
             end if;
 

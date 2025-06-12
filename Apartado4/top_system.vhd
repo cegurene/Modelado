@@ -24,6 +24,7 @@ end top_system;
 
 architecture rtl of top_system is
 
+  
  signal DATO_RX_OK : std_logic;
   signal DATO_RX    : std_logic_vector(7 downto 0);
  

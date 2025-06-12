@@ -13,7 +13,6 @@ end spi_controller_tb;
 
 architecture sim of spi_controller_tb is
 
-
   signal CLK_i         : std_logic                     := '0';
   signal RST_i         : std_logic                     := '1';
   signal DATA_SPI_OK_i : std_logic                     := '0';
@@ -50,9 +49,7 @@ begin  -- sim
 
   -- estimulos para CLK y RST
 rst_i <= '0' after 55ns;                             --completar
-clk_i <= not CLK_i after 10ns;                             --completar
-
---  
+clk_i <= not CLK_i after 10ns;                       --completar
 
 
   process
