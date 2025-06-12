@@ -19,7 +19,7 @@ architecture rtl of receiver is
   type state_type is (idle, start_bit, receiving, parity_check, stop_bit, output_data);
   signal state, next_state : state_type := idle;
 
-  -- Señales internas
+  -- SeÃ±ales internas
   signal bit_counter  : integer range 0 to 7 := 0; -- 8 datos
   signal rx_samples   : std_logic_vector(7 downto 0) := (others => '0');
   signal sample_count : integer := 0;
@@ -91,8 +91,9 @@ begin
           when start_bit =>
             sample_check <= 0;
 
-            if sample_count = SAMPLES_PER_BIT - 1 then
+            if sample_count = SAMPLES_PER_BIT - 1 then  -- Esperar a completar la muestra del START
 
+              -- Verificar si el START es valido
               if sample_check < 0 then
                 state <= receiving;
                 parity_calc <= '0';
@@ -118,11 +119,13 @@ begin
 
             end if;
 
-          when receiving =>
+          when receiving =>  --Empezar a recibir datos
             sample_check <= 0;
           
             if sample_count = SAMPLES_PER_BIT - 1 then          
               
+              -- Verfificamos si se ha recibido un '1' o '0'
+              -- Ademas, calculamos la paridad
               if sample_check < 0 then
                 temp_data(bit_counter) <= '0';
               else
@@ -175,7 +178,7 @@ begin
               end if;
             end if;
 
-          when stop_bit =>
+          when stop_bit =>  -- Esperar bit de STOP
             sample_check <= 0;
           
             if sample_count = SAMPLES_PER_BIT - 1 then
@@ -201,7 +204,7 @@ begin
               end if;
             end if;
 
-          when output_data =>
+          when output_data =>  -- Fin
 
             dato_rx <= temp_data;
             DATO_RX_OK <= '1';

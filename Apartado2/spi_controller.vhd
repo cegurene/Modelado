@@ -3,38 +3,38 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity spi_controller is
-  port (
-    CLK         : in  std_logic;
-    RST         : in  std_logic;
-    DATA_SPI_OK : in  std_logic;
-    DATA_SPI    : in  std_logic_vector(8 downto 0); -- bit 8: D_C, bits 7-0: dato
-    D_C         : out std_logic;
-    CS          : out std_logic;
-    SDIN        : out std_logic;
-    SCLK        : out std_logic;
-    END_SPI     : out std_logic
-  );
+   port (
+      CLK         : in  std_logic;
+      RST         : in  std_logic;
+      DATA_SPI_OK : in  std_logic;
+      DATA_SPI    : in  std_logic_vector(8 downto 0); -- bit 8: D_C, bits 7-0: dato
+      D_C         : out std_logic;
+      CS          : out std_logic;
+      SDIN        : out std_logic;
+      SCLK        : out std_logic;
+      END_SPI     : out std_logic
+   );
 end spi_controller;
 
 architecture rtl of spi_controller is
 
-  ------------------------------------------------------------------------------
-  -- Declaracion de tipos y señales internas
-  ------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- Declaracion de tipos y seÃ±ales internas
+------------------------------------------------------------------------------
 
-  signal shift_reg      : std_logic_vector(7 downto 0);
-  signal count_mux      : integer range 0 to 9 := 0;
-  signal sclk_int       : std_logic := '1';
-  signal ce             : std_logic := '0';
-  signal prescaler      : integer := 0;
-  signal prescaler_int  : integer := 77; -- N1 = puesto 11 * 7 -- N1 * 10ns (ajustar segun el puesto)
-  signal fc             : std_logic := '0';
-  signal int            : std_logic := '0'; --para la generacion de ce a partir de fc
-  signal busy           : std_logic := '0';
+   signal shift_reg      : std_logic_vector(7 downto 0);
+   signal count_mux      : integer range 0 to 9 := 0;
+   signal sclk_int       : std_logic := '1';
+   signal ce             : std_logic := '0';
+   signal prescaler      : integer := 0;
+   signal prescaler_int  : integer := 77; -- N1 = puesto 11 * 7 -- N1 * 10ns (ajustar segun el puesto)
+   signal fc             : std_logic := '0';
+   signal int            : std_logic := '0'; --para la generacion de ce a partir de fc
+   signal busy           : std_logic := '0';
 
 begin
 
--- Prescaler para generar señal fc y ce
+-- Prescaler para generar seÃ±al fc y ce
    process(CLK, RST)
    begin
       if RST = '1' then
@@ -82,13 +82,13 @@ begin
          D_C <= '0';
       elsif rising_edge(CLK) then
          if DATA_SPI_OK = '1' then
-            D_C <= DATA_SPI(8);
-            shift_reg <= DATA_SPI(7 downto 0);
+            D_C <= DATA_SPI(8);  --- bit 8: D_C
+            shift_reg <= DATA_SPI(7 downto 0);  --- bits 7-0: dato
          end if;
       end if;
    end process;
 
--- Generacion de señal busy y CS
+-- Generacion de seÃ±al busy y CS
    process(RST, CLK, count_mux)
    begin
       if RST = '1' then
@@ -106,7 +106,7 @@ begin
       end if;
    end process;
    
--- Envio de la señal
+-- Envio de la seÃ±al
    process(CLK, RST, ce, count_mux, busy)
    begin
       if RST = '1' then
@@ -115,7 +115,7 @@ begin
          SDIN <= '0';
       elsif rising_edge(CLK) then
          if ce = '1' then
-            case count_mux is
+            case count_mux is  --Enviamos los bits
                when 0 =>
                   count_mux <= count_mux + 1;
                   SDIN <= shift_reg(7);
@@ -143,13 +143,9 @@ begin
                when 8 =>
                   count_mux <= count_mux + 1;
                   END_SPI <= '1';
---                  cs <= '1';
---                  busy <= '0';
                when others =>
                   END_SPI <= '0';
                   count_mux <= 0;
---                  busy <= '0';
---                  cs <= '1';  
             end case;
          end if;
          if busy = '0' then
