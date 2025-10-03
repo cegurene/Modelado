@@ -49,8 +49,8 @@ begin  -- rtl
 
     dato_tx <= x"31";
     Rx      <= '1';
-    wait for 1.5 ms;                     -- sólo para simular el top_system
-    --wait for 1 us;                      --sólo para simular el  receiver
+    --wait for 1.5 ms;                     -- sólo para simular el top_system
+    wait for 1 us;                      --sólo para simular el  receiver
 
     tx_data;
 

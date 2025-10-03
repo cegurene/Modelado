@@ -17,8 +17,8 @@ end display_controller;
 architecture Behavioral of display_controller is
 
   --puesto 11
-  --constant CTE_ANDS : integer := 11 * 50; --simulacion
-  constant CTE_ANDS : integer := 137500; --descarga (2,75ms/10ns)
+  constant CTE_ANDS : integer := 11 * 50; --simulacion
+  --constant CTE_ANDS : integer := 137500; --descarga (2,75ms/10ns)
 
   -- Registro de desplazamiento de 4 caracteres (4 x 8 bits = 32 bits)
   signal shift_reg : std_logic_vector(31 downto 0) := (others => '0');

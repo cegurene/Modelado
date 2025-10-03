@@ -49,7 +49,7 @@ begin  -- sim
 
   -- estimulos para CLK y RST
 rst_i <= '0' after 55ns;                             --completar
-clk_i <= not CLK_i after 10ns;                       --completar
+clk_i <= not CLK_i after 5ns;                       --completar
 
 
   process

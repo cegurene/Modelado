@@ -38,7 +38,7 @@ begin  -- sim
       AND_70 => AND_70_i);
 
   RST_i <= '0' after 55ns;                             --completar
-  CLK_i <= not CLK_i after 10ns;                             --completar
+  CLK_i <= not CLK_i after 5ns;                             --completar
 
   process
 
